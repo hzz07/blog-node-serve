@@ -313,7 +313,7 @@ exports.getArticleListQ = (req,res)=>{
             };
             if(article){
                 fields = {
-                    title = 1,
+                    title : 1,
                     create_time: 1,
                 };
             }
