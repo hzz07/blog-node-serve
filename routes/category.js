@@ -2,7 +2,7 @@
  * @Author: mikey.hzz 
  * @Date: 2020-01-20 14:17:31 
  * @Last Modified by: mikey.hzz
- * @Last Modified time: 2020-01-21 09:52:01
+ * @Last Modified time: 2020-03-05 09:52:41
  */
 const util = require('../utils/util');
 const Category = require('../model/category');
@@ -53,6 +53,7 @@ exports.getCategory= (req, res) => {
             let fields = {
                 _id:1,
                 name:1,
+                desc:1,
                 create_time: 1 
             }
             let options ={
@@ -73,4 +74,47 @@ exports.getCategory= (req, res) => {
     })
 
 
+}
+
+exports.addCategory = (req,res)=>{
+    let {name,desc} = req.body;
+    Category.findOne({
+        name,
+    }).then((result) => {
+        if (!result) {
+            let category = new Category({
+              name,
+              desc,
+            });
+            category
+              .save()
+              .then(data => {
+                util.responseClient(res, 200, 0, '添加成功', data);
+              })
+              .catch(err => {
+                throw err;
+              });
+          } else {
+            util.responseClient(res, 200, 1, '该分类已存在');
+          }  
+    }).catch((err) => {
+        console.error('err :', err);
+        util.responseClient(res);
+    });
+}
+
+exports.delCategory = (req,res) =>{
+    let {id} = req.body
+    Category.deleteMany({ _id: id })
+    .then(result => {
+      if (result.n === 1) {
+        util.responseClient(res, 200, 0, '操作成功!');
+      } else {
+        util.responseClient(res, 200, 1, '分类不存在');
+      }
+    })
+    .catch(err => {
+      console.error('err :', err);
+      util.responseClient(res);
+    });
 }

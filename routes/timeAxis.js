@@ -3,10 +3,10 @@ const TimeAxis = require('../model/timeAxis');
 
 //获取全部时间轴列表
 exports.getTimeAxisList = (req,res)=>{
-    let keyWord =  req.body.keyWord || null;
-    let state = req.body.state ||'';
-    let pageNum = parseInt(req.body.pageNum) || 1;
-    let pageSize = parseInt(req.body.pageSize) || 10;
+    let keyWord =  req.query.keyWord || null;
+    let state = req.query.state ||'';
+    let pageNum = parseInt(req.query.pageNum) || 1;
+    let pageSize = parseInt(req.query.pageSize) || 10;
     let conditions = {}
     if(!state){
         if(keyWord){
