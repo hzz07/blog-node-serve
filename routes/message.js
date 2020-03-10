@@ -6,30 +6,30 @@ const User = require('../model/user');
 
 //获取全部留言
 exports.getMessageList = (req, res) => {
-	let keyword = req.query.keyword || null;
+	let keyWord = req.query.keyWord || null;
 	let state = req.query.state || '';
 	let pageNum = parseInt(req.query.pageNum) || 1;
 	let pageSize = parseInt(req.query.pageSize) || 10;
 	let conditions = {};
 	if (state === '') {
-		if (keyword) {
-			const reg = new RegExp(keyword, 'i'); //不区分大小写
+		if (keyWord) {
+			const reg = new RegExp(keyWord, 'i'); //不区分大小写
 			conditions = {
 				content: { $regex: reg },
 			};
 		}
 	} else if (state) {
 		state = parseInt(state);
-		if (keyword) {
-			const reg = new RegExp(keyword, 'i');
+		if (keyWord) {
+			const reg = new RegExp(keyWord, 'i');
 			conditions = { $and: [{ $or: [{ state: state }] }, { $or: [{ content: { $regex: reg } }] }] };
 		} else {
 			conditions = { state };
 		}
 	} else {
 		state = 0;
-		if (keyword) {
-			const reg = new RegExp(keyword, 'i');
+		if (keyWord) {
+			const reg = new RegExp(keyWord, 'i');
 			conditions = { $and: [{ $or: [{ state: state }] }, { $or: [{ content: { $regex: reg } }] }] };
 		} else {
 			conditions = { state };
@@ -71,7 +71,7 @@ exports.getMessageList = (req, res) => {
 					// throw error;
 				} else {
 					responseData.list = result;
-					responseClient(res, 200, 0, 'success', responseData);
+					util.responseClient(res, 200, 0, 'success', responseData);
 				}
 			});
 		}
@@ -104,7 +104,7 @@ exports.addMessage = (req, res) => {
 					message
 						.save()
 						.then(data => {
-							responseClient(res, 200, 0, '添加成功', data);
+							util.responseClient(res, 200, 0, '添加成功', data);
 						})
 						.catch(err => {
 							console.error('err :', err);
@@ -115,7 +115,7 @@ exports.addMessage = (req, res) => {
 			})
 			.catch(error => {
 				console.error('error :', error);
-				responseClient(res);
+				util.responseClient(res);
 			});
 	} else {
 		// 直接保存留言内容
@@ -128,7 +128,7 @@ exports.addMessage = (req, res) => {
 		message
 			.save()
 			.then(data => {
-				responseClient(res, 200, 0, '添加成功', data);
+				util.responseClient(res, 200, 0, '添加成功', data);
 			})
 			.catch(err2 => {
 				console.error('err 2:', err2);
@@ -144,38 +144,38 @@ exports.delMessage = (req, res) => {
 		.then(result => {
 			// console.log('result :', result)
 			if (result.n === 1) {
-				responseClient(res, 200, 0, '删除成功!');
+				util.responseClient(res, 200, 0, '删除成功!');
 			} else {
-				responseClient(res, 200, 1, '留言不存在或者已经删除！');
+				util.responseClient(res, 200, 1, '留言不存在或者已经删除！');
 			}
 		})
 		.catch(err => {
 			console.error('err :', err);
-			responseClient(res);
+			util.responseClient(res);
 		});
 };
 
 // 详情
 exports.getMessageDetail = (req, res) => {
 	if (!req.session.userInfo) {
-		responseClient(res, 200, 1, '您还没登录,或者登录信息已过期，请重新登录！');
+		util.responseClient(res, 200, 1, '您还没登录,或者登录信息已过期，请重新登录！');
 		return;
 	}
 	let { id } = req.body;
 	Message.findOne({ _id: id })
 		.then(data => {
-			responseClient(res, 200, 0, '操作成功！', data);
+			util.responseClient(res, 200, 0, '操作成功！', data);
 		})
 		.catch(err => {
 			console.error('err :', err);
-			responseClient(res);
+			util.responseClient(res);
 		});
 };
 
 // 回复留言
 exports.addReplyMessage = (req, res) => {
 	if (!req.session.userInfo) {
-		responseClient(res, 200, 1, '您还没登录,或者登录信息已过期，请重新登录！');
+		util.responseClient(res, 200, 1, '您还没登录,或者登录信息已过期，请重新登录！');
 		return;
 	}
 	let { id, state, content } = req.body;
@@ -197,15 +197,15 @@ exports.addReplyMessage = (req, res) => {
 				},
 			)
 				.then(data => {
-					responseClient(res, 200, 0, '操作成功', data);
+					util.responseClient(res, 200, 0, '操作成功', data);
 				})
 				.catch(err1 => {
 					console.error('err1:', err1);
-					responseClient(res);
+					util.responseClient(res);
 				});
 		})
 		.catch(error2 => {
 			console.error('error2 :', error2);
-			responseClient(res);
+			util.responseClient(res);
 		});
 };

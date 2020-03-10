@@ -2,7 +2,7 @@
  * @Author: mikey.hzz 
  * @Date: 2020-01-13 15:19:23 
  * @Last Modified by: mikey.hzz
- * @Last Modified time: 2020-03-04 17:30:31
+ * @Last Modified time: 2020-03-09 11:06:39
  * 所有路由接口配置
  */
 const user =require('./users');
@@ -11,6 +11,8 @@ const tag = require('./tag');
 const category = require('./category');
 const comment =require('./comment');
 const timeAxis = require('./timeAxis');
+const message = require('./message');
+
 
 module.exports=app=>{
   //用户 登录 注册模块
@@ -42,4 +44,10 @@ module.exports=app=>{
   app.post('/updateTimeAxis',timeAxis.updateTimeAxis)
   app.post('/delTimeAxis',timeAxis.delTimeAxis)
   app.post('/getTimeAxisDetail',timeAxis.getTimeAxisDetail)
+  //留言模块
+  app.get('/getMessageList',message.getMessageList)
+  app.post('/addMessage',message.addMessage)
+  app.post('/delMessage',message.delMessage)
+  app.post('/getMessageDetail',message.getMessageDetail)
+  app.post('/addReplyMessage',message.addReplyMessage)
 } 

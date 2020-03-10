@@ -3,7 +3,7 @@
  * @Date: 2020-01-10 14:26:11 
  * @Last Modified by: mikey.hzz
  * 留言数据模型
- * @Last Modified time: 2020-02-27 14:38:13
+ * @Last Modified time: 2020-03-09 11:06:16
  */
 
  const { mongoose } = require('../connect/mongoose');
@@ -45,4 +45,4 @@
 	incrementBy: 1,
  })
 
- model.exports = mongoose.model('Message',messageSchema)
+ module.exports = mongoose.model('Message',messageSchema)
