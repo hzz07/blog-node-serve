@@ -76,52 +76,149 @@ exports.getCommentList = (req, res) => {
 
   //新增评论
   exports.addComments = (req,res)=>{
-    if(req.session.userInfo){
-      util.responseClient(res,200,1,'您还没登录，或者登录信息已过期，请重新登录！');
-      return
+    // if(req.session.userInfo){
+    //   util.responseClient(res,200,1,'您还没登录，或者登录信息已过期，请重新登录！');
+    //   return
+    // }
+    let { article_id, content } = req.body;
+    let user_id = req.cookies.user_id || null;
+    let name = req.body.name || null;
+    let email = req.body.email || 0;
+    // console.log('is_handle ', is_handle);
+    //正则表达式
+    const reg = new RegExp(
+      '^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$',
+    ); 
+    if(!reg.test(email)){
+      util.responseClient(res,400,2,'请输入格式正确的邮箱！');
+      return;
     }
-    let {article_id,user_id,content} = req.body;
-    User.findById({
-      _id:user_id
-    }).then(result=>{
-      if(result){
-        let userInfo={
-          user_id:result._id,
-          name:result.name,
-          type:result.type,
-          avator:result.avator
-        }
-        let comment = new Comment({
-          article_id:article_id,
-          content:content,
-          user_id:user_id,
-          user:userInfo
-        })
-        comment.save().then(commentResult=>{
-          Article.findOne({_id:article_id},(error,data)=>{
-            if(error){
-              console.error('Error:'+error)
-            }else{
-              data.comments.push(commentResult._id)
-              data.other.comments = data.other.comments+1
-              Article.updateOne({_id:article_id},{comments:data.comments,other:data.other,is_handle:0}).then(result=>{
-                util.responseClient(res,200,0,'操作成功！',commentResult)
-              }).catch(err=>{
-                console.error('err:'+err)
-              })
-            }
+    let user = new User({
+      email,
+      name,
+      password:util.md5(email + util.MD5_fixed),
+      phone:'',
+      type:'1',
+      introduce:'',
+    });
+    console.log(user_id)
+    if(user_id){
+      User.findById({
+        _id:user_id
+      }).then(result=>{
+        if(result){
+          let userInfo={
+            user_id:result._id,
+            name:result.name,
+            type:result.type,
+            avator:result.avator
+          }
+          let comment = new Comment({
+            article_id:article_id,
+            content:content,
+            user_id:user_id,
+            user:userInfo
           })
-        }).catch(err2 => {
-          console.error('err :', err2);
-          throw err2;
-        });
-      }else{
-        util.responseClient(res, 200, 1, '用户不存在')
-      }
-    }).catch(error => {
-      console.error('error :', error);
-      responseClient(res);
-    })
+          comment.save().then(commentResult=>{
+            Article.findOne({_id:article_id},(error,data)=>{
+              if(error){
+                console.error('Error:'+error)
+              }else{
+                data.comments.push(commentResult._id)
+                data.other.comments = data.other.comments+1
+                Article.updateOne({_id:article_id},{comments:data.comments,other:data.other,is_handle:0}).then(result=>{
+                  util.responseClient(res,200,0,'操作成功！',commentResult)
+                }).catch(err=>{
+                  console.error('err:'+err)
+                })
+              }
+            })
+          }).catch(err2 => {
+            console.error('err :', err2);
+            throw err2;
+          });
+        }else{
+          user.save().then(result => {
+            if(result){
+              console.log(result)
+              let userInfo={
+                user_id:result._id,
+                name:result.name,
+                type:result.type,
+                avator:result.avator
+              }
+              let comment = new Comment({
+                article_id:article_id,
+                content:content,
+                user_id:user_id,
+                user:userInfo
+              })
+              comment.save().then(commentResult=>{
+                Article.findOne({_id:article_id},(error,data)=>{
+                  if(error){
+                    console.error('Error:'+error)
+                  }else{
+                    data.comments.push(commentResult._id)
+                    data.other.comments = data.other.comments+1
+                    Article.updateOne({_id:article_id},{comments:data.comments,other:data.other,is_handle:0}).then(result=>{
+                      util.responseClient(res,200,0,'操作成功！',commentResult)
+                    }).catch(err=>{
+                      console.error('err:'+err)
+                    })
+                  }
+                })
+              }).catch(err2 => {
+                console.error('err :', err2);
+                throw err2;
+              });
+            }else{
+              util.responseClient(res, 200, 1, '服务器开小差了!')
+            }
+          });  
+        }
+      }).catch(error => {
+        console.error('error :', error);
+        responseClient(res);
+      })
+    }else{
+      user.save().then(result => {
+        if(result){
+          let userInfo={
+            user_id:result._id,
+            name:result.name,
+            type:result.type,
+            avator:result.avator
+          }
+          let comment = new Comment({
+            article_id:article_id,
+            content:content,
+            user_id:result._id,
+            user:userInfo
+          })
+          comment.save().then(commentResult=>{
+            Article.findOne({_id:article_id},(error,data)=>{
+              if(error){
+                console.error('Error:'+error)
+              }else{
+                data.comments.push(commentResult._id)
+                data.other.comments = data.other.comments+1
+                Article.updateOne({_id:article_id},{comments:data.comments,other:data.other,is_handle:0}).then(result=>{
+                  util.responseClient(res,200,0,'操作成功！',commentResult)
+                }).catch(err=>{
+                  console.error('err:'+err)
+                })
+              }
+            })
+          }).catch(err2 => {
+            console.error('err :', err2);
+            throw err2;
+          });
+        }else{
+          util.responseClient(res, 200, 1, '服务器开小差了!')
+        }
+      });  
+    }
+    
   }
   //添加评论
   exports.addThirdComment=(req,res)=>{

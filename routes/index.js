@@ -2,7 +2,7 @@
  * @Author: mikey.hzz 
  * @Date: 2020-01-13 15:19:23 
  * @Last Modified by: mikey.hzz
- * @Last Modified time: 2020-03-09 11:06:39
+ * @Last Modified time: 2020-03-24 15:05:50
  * 所有路由接口配置
  */
 const user =require('./users');
@@ -26,6 +26,7 @@ module.exports=app=>{
   //文章模块
   app.post('/addArticle',article.addArticle);
   app.post('/getArticleList',article.getArticleList);
+  app.get('/getArticleListQ',article.getArticleListQ);
   app.post('/getArticleDetail',article.getArticleDetail);
   app.post('/updateArticle',article.updateArticle)
   //标签模块
@@ -50,4 +51,6 @@ module.exports=app=>{
   app.post('/delMessage',message.delMessage)
   app.post('/getMessageDetail',message.getMessageDetail)
   app.post('/addReplyMessage',message.addReplyMessage)
+  //评论模块
+  app.post('/addComments',comment.addComments)
 } 

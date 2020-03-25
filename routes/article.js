@@ -310,6 +310,7 @@ exports.getArticleListQ = (req,res)=>{
                 category: 1,
                 meta: 1,
                 create_time: 1,
+                other:1
             };
             if(article){
                 fields = {
@@ -385,7 +386,16 @@ exports.getArticleListQ = (req,res)=>{
                     }
                     util.responseClient(res,200,0,'操作成功',responseData);
                 }
-            })
+            }).populate([
+                { path: 'tags',select:'name' },
+                { path: 'comments',select:'article_id' },
+                { path: 'category',select:'name' },
+              ])
+              .exec((err, doc) => {
+                // console.log("doc:");          // aikin
+                // console.log("doc.tags:",doc.tags);          // aikin
+                //console.log("doc.category:",doc.category);           // undefined
+              });   
         }
     })
 }
