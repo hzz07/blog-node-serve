@@ -311,7 +311,7 @@ exports.getArticleListQ = (req,res)=>{
                 meta: 1,
                 create_time: 1,
                 other:1,
-                state:1
+                origin:1
             };
             if(article){
                 fields = {
