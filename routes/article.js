@@ -310,7 +310,8 @@ exports.getArticleListQ = (req,res)=>{
                 category: 1,
                 meta: 1,
                 create_time: 1,
-                other:1
+                other:1,
+                state:1
             };
             if(article){
                 fields = {
