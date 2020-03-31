@@ -3,7 +3,7 @@
  * @Date: 2020-01-10 14:26:11 
  * @Last Modified by: mikey.hzz
  * 文章数据模型
- * @Last Modified time: 2020-01-22 14:56:50
+ * @Last Modified time: 2020-03-31 11:18:39
  */
 const {mongoose} = require('../connect/mongoose');
 const autoIncrement = require('mongoose-auto-increment');
@@ -70,6 +70,11 @@ const articleSchema = new mongoose.Schema({
         ref: 'Tag',
         required: true
     }],
+    //banner展示 0=>不展示 1=>展示
+    banner:{
+        type: Number,
+        default: 0
+    },
     comments:[{type:mongoose.Schema.Types.ObjectId,ref:'Comment',required:true}],
     //文章分类
     category:[{type:mongoose.Schema.Types.ObjectId,ref:'Category',required:true}],
