@@ -253,15 +253,15 @@ exports.delArticle=(req,res)=>{
 }
 //前台文章列表
 exports.getArticleListQ = (req,res)=>{
-    let keyWord = req.body.keyWord || null;
-    let state = req.body.state || '';
-    let likes = req.body.likes || '';
-    let pageNum = parseInt(req.body.pageNum)||1;
-    let pageSize = parseInt(req.body.pageSize)||10;
-    let tag_id = req.body.tag_id || '';
-    let category_id = req.body.category_id || '';
-    let article = req.body.article || '';
-
+    let keyWord = req.query.keyWord || null;
+    let state = req.query.state || '';
+    let likes = req.query.likes || '';
+    let views = req.query.views || '';
+    let pageNum = parseInt(req.query.pageNum)||1;
+    let pageSize = parseInt(req.query.pageSize)||10;
+    let tag_id = req.query.tag_id || '';
+    let category_id = req.query.category_id || '';
+    let article = req.query.article || '';
     // 如果是文章归档 返回全部文章
     if (article) {
         pageSize = 10000;
@@ -334,6 +334,12 @@ exports.getArticleListQ = (req,res)=>{
                         //根据热度返回文章列表
                         result.sort((a,b)=>{
                             return b.other.likes - a.other.likes;
+                        })
+                        responseData.list = result 
+                    }else if(views){
+                        //根据观看返回文章
+                        result.sort((a,b)=>{
+                            return b.other.views - a.other.views;
                         })
                         responseData.list = result 
                     }else if(category_id){
